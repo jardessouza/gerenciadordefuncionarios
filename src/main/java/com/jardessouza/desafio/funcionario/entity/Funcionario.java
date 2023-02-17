@@ -1,21 +1,25 @@
 package com.jardessouza.desafio.funcionario.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jardessouza.desafio.endereco.entity.Endereco;
 import com.jardessouza.desafio.funcionario.enums.Sexo;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Data
 @Table(name = "TB_FUNCIONARIOS")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Funcionario {
+@ToString
+public class Funcionario implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
     @Column(nullable = false, length = 255)
     private String nome;
@@ -24,7 +28,10 @@ public class Funcionario {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Sexo sexo;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id" )
+    @Column(nullable = false)
+    private String cep;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id")
     private Endereco endereco;
+
 }
