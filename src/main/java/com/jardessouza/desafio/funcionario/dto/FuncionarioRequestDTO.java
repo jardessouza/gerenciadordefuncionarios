@@ -18,4 +18,6 @@ public class FuncionarioRequestDTO {
     private Integer idade;
     @NotNull
     private Sexo sexo;
+    @NotNull
+    private String cep;
 }

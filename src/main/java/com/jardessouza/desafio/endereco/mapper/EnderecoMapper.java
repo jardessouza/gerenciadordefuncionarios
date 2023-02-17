@@ -11,5 +11,6 @@ public interface EnderecoMapper {
     public static final EnderecoMapper INSTANCE = Mappers.getMapper(EnderecoMapper.class);
 
     Endereco toModel(EnderecoRequestDTO enderecoRequestDTO);
+    Endereco toModel(EnderecoResponseDTO enderecoResponseDTO);
     EnderecoResponseDTO toDTO(Endereco endereco);
 }

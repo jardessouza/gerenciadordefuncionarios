@@ -10,12 +10,5 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnderecoRequestDTO {
-    @NotBlank
     private String cep;
-    @NotBlank
-    private String logradouro;
-    @NotBlank
-    private String bairro;
-    @NotBlank
-    private String uf;
 }
