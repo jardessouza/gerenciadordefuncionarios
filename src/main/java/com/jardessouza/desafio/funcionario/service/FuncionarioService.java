@@ -5,9 +5,7 @@ import com.jardessouza.desafio.endereco.entity.Endereco;
 import com.jardessouza.desafio.endereco.mapper.EnderecoMapper;
 import com.jardessouza.desafio.endereco.repository.EnderecoRepository;
 import com.jardessouza.desafio.endereco.service.EnderecoService;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioPatchRequest;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioRequestDTO;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioResponseDTO;
+import com.jardessouza.desafio.funcionario.dto.*;
 import com.jardessouza.desafio.funcionario.entity.Funcionario;
 import com.jardessouza.desafio.funcionario.exception.FuncionarioAlreadyExists;
 import com.jardessouza.desafio.funcionario.exception.FuncionarioNotFound;
@@ -16,7 +14,6 @@ import com.jardessouza.desafio.funcionario.repository.FuncionarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -29,15 +26,15 @@ public class FuncionarioService {
 
     @Transactional
     public FuncionarioResponseDTO save(FuncionarioRequestDTO funcionarioRequestDTO) {
-
+        checkIfFuncionarioExists(funcionarioRequestDTO.getNome());
         Funcionario fucionarioTobeCreated = getFuncionarioAndSetEndereco(funcionarioRequestDTO);
         Funcionario funcionarioCreated = this.funcionarioRepository.save(fucionarioTobeCreated);
         return FuncionarioMapper.INSTANCE.toDTO(funcionarioCreated);
     }
 
-    public FuncionarioResponseDTO findByIdFuncionario(Long id) {
-        Funcionario funcionarioFound = this.funcionarioRepository.findById(id)
-                .orElseThrow(() -> new FuncionarioNotFound(id));
+    public FuncionarioResponseDTO findByIdFuncionario(FuncionarioIdRequestDTO funcionarioIdRequest) {
+        Funcionario funcionarioFound = this.funcionarioRepository.findById(funcionarioIdRequest.getId())
+                .orElseThrow(() -> new FuncionarioNotFound(funcionarioIdRequest.getId()));
         getFuncionarioAndSetEndereco(FuncionarioMapper.INSTANCE.toDTORequest(funcionarioFound));
         return FuncionarioMapper.INSTANCE.toDTO(funcionarioFound);
     }
@@ -47,26 +44,26 @@ public class FuncionarioService {
         return FuncionarioMapper.INSTANCE.toDTO(listAllFuncionarios);
     }
 
-    public FuncionarioResponseDTO getFuncionarioByCep(String cep) {
-        Funcionario funcionarioFound = this.funcionarioRepository.findByCep(cep)
-                .orElseThrow(() -> new FuncionarioNotFound(cep));
+    public FuncionarioResponseDTO getFuncionarioByCep(FuncionarioCepRequestDTO funcionarioCepRequest) {
+        Funcionario funcionarioFound = this.funcionarioRepository.findByCep(funcionarioCepRequest.getCep())
+                .orElseThrow(() -> new FuncionarioNotFound(funcionarioCepRequest.getCep()));
         getFuncionarioAndSetEndereco(FuncionarioMapper.INSTANCE.toDTORequest(funcionarioFound));
         return FuncionarioMapper.INSTANCE.toDTO(funcionarioFound);
     }
 
-    public void updateFuncionario(Long id, FuncionarioRequestDTO funcionarioRequestDTO) {
-        FuncionarioResponseDTO funcionarioFound = findByIdFuncionario(id);
+    public void updateFuncionario(FuncionarioUpdateRequestDTO funcionarioRequestDTO) {
+        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioRequestDTO.getId());
         getAndUpdateFuncionario(funcionarioRequestDTO, funcionarioFound);
     }
 
-    public void deleteFuncionario(Long id) {
-        FuncionarioResponseDTO funcionarioFound = findByIdFuncionario(id);
+    public void deleteFuncionario(FuncionarioIdRequestDTO funcionarioIdRequest) {
+        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioIdRequest.getId());
         this.funcionarioRepository.delete(FuncionarioMapper.INSTANCE.toModel(funcionarioFound));
     }
 
-    public void replaceFuncionario(Long id, FuncionarioPatchRequest funcionarioPatchRequest) {
-        FuncionarioResponseDTO funcionarioFound = findByIdFuncionario(id);
-        Funcionario funcionarioToBeCreated = FuncionarioMapper.INSTANCE.toModel(funcionarioPatchRequest);
+    public void replaceFuncionario(FuncionarioPatchRequestDTO funcionarioPatchRequestDTO) {
+        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioPatchRequestDTO.getId());
+        Funcionario funcionarioToBeCreated = FuncionarioMapper.INSTANCE.toModel(funcionarioPatchRequestDTO);
         ValidatingAndSettingAttributesFuncionario(funcionarioFound, funcionarioToBeCreated);
         getAndSaveEndereco(funcionarioFound, funcionarioToBeCreated);
         this.funcionarioRepository.save(funcionarioToBeCreated);
@@ -97,17 +94,28 @@ public class FuncionarioService {
         return fucionarioTobeCreated;
     }
 
-    private void getAndUpdateFuncionario(FuncionarioRequestDTO funcionarioRequestDTO, FuncionarioResponseDTO
+    private void getAndUpdateFuncionario(FuncionarioUpdateRequestDTO funcionarioRequestDTO, FuncionarioResponseDTO
             funcionarioFound) {
-        Funcionario funcionarioToBeCreated = getFuncionarioAndSetEndereco(funcionarioRequestDTO);
+        Funcionario funcionarioToBeCreated = getFuncionarioAndSetEndereco(
+                FuncionarioMapper.INSTANCE.toDTORequest(funcionarioRequestDTO));
         funcionarioToBeCreated.setId(funcionarioFound.getId());
         funcionarioToBeCreated.getEndereco().setId(funcionarioFound.getEndereco().getId());
         this.enderecoRepository.save(funcionarioToBeCreated.getEndereco());
         this.funcionarioRepository.save(funcionarioToBeCreated);
     }
-    public void checkIfFuncionarioExists(String nome){
+
+    public void checkIfFuncionarioExists(String nome) {
         this.funcionarioRepository.findByNome(nome)
-                .ifPresent(funcionario -> {throw new FuncionarioAlreadyExists(nome);});
+                .ifPresent(funcionario -> {
+                    throw new FuncionarioAlreadyExists(nome);
+                });
+    }
+
+    public FuncionarioResponseDTO findAndCheckFuncionarioExists(Long id) {
+        Funcionario funcionarioFound = this.funcionarioRepository.findById(id)
+                .orElseThrow(() -> new FuncionarioNotFound(id));
+        getFuncionarioAndSetEndereco(FuncionarioMapper.INSTANCE.toDTORequest(funcionarioFound));
+        return FuncionarioMapper.INSTANCE.toDTO(funcionarioFound);
     }
 
 }

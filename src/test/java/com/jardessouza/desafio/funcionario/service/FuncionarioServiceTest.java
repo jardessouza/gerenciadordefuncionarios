@@ -5,9 +5,7 @@ import com.jardessouza.desafio.endereco.entity.Endereco;
 import com.jardessouza.desafio.endereco.repository.EnderecoRepository;
 import com.jardessouza.desafio.endereco.service.EnderecoService;
 import com.jardessouza.desafio.funcionario.builder.FuncionarioDTOBuilder;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioPatchRequest;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioRequestDTO;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioResponseDTO;
+import com.jardessouza.desafio.funcionario.dto.*;
 import com.jardessouza.desafio.funcionario.entity.Funcionario;
 import com.jardessouza.desafio.funcionario.repository.FuncionarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +84,7 @@ public class FuncionarioServiceTest {
     void WhenSearchForIdEGetSuccessRetornarEmployee(){
         FuncionarioRequestDTO funcionarioExpected = funcionarioDTOBuilder.buildFuncionarioDTO();
 
-        FuncionarioResponseDTO funcionarioFound = this.funcionarioService.findByIdFuncionario(1L);
+        FuncionarioResponseDTO funcionarioFound = this.funcionarioService.findAndCheckFuncionarioExists(1L);
 
         Assertions.assertThat(funcionarioFound.getId()).isNotNull();
         Assertions.assertThat(funcionarioFound.getNome()).isEqualTo(funcionarioExpected.getNome());
@@ -98,7 +96,7 @@ public class FuncionarioServiceTest {
                 .thenReturn(Optional.empty());
 
         Assertions.assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> this.funcionarioService.findByIdFuncionario(1L));
+                .isThrownBy(() -> this.funcionarioService.findAndCheckFuncionarioExists(1L));
     }
 
     @Test
@@ -116,11 +114,11 @@ public class FuncionarioServiceTest {
 
     @Test
     void WhenFindCEPReturnsEmployeeWithSuccess(){
-        FuncionarioRequestDTO funcionarioExpected = funcionarioDTOBuilder.buildFuncionarioDTO();
-        FuncionarioResponseDTO funcionarioFound = this.funcionarioService.getFuncionarioByCep("65065600");
+        FuncionarioCepRequestDTO funcionarioCepRequestDTO = funcionarioDTOBuilder.buildFuncionarioCepRequest();
+        FuncionarioResponseDTO funcionarioFound = this.funcionarioService.getFuncionarioByCep(funcionarioCepRequestDTO);
 
         Assertions.assertThat(funcionarioFound.getId()).isNotNull();
-        Assertions.assertThat(funcionarioFound.getNome()).isEqualTo(funcionarioExpected.getNome());
+        Assertions.assertThat(funcionarioFound.getNome()).isEqualTo(funcionarioDTOBuilder.buildFuncionario().getNome());
     }
 
     @Test
@@ -128,30 +126,34 @@ public class FuncionarioServiceTest {
         BDDMockito.when(this.funcionarioRepositoryMock.findByCep(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
 
+        FuncionarioCepRequestDTO funcionarioCepRequestDTO = funcionarioDTOBuilder.buildFuncionarioCepRequest();
+
         Assertions.assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> this.funcionarioService.getFuncionarioByCep("65065600"));
+                .isThrownBy(() -> this.funcionarioService.getFuncionarioByCep(funcionarioCepRequestDTO));
     }
 
     @Test
     void WhenSuccessUpdateEmployee(){
-        FuncionarioRequestDTO funciarioToBeUpdate = funcionarioDTOBuilder.buildFuncionarioDTO();
+        FuncionarioUpdateRequestDTO funciarioToBeUpdate = funcionarioDTOBuilder.buildFuncionarioUpdateRequest();
         funciarioToBeUpdate.setNome("Bruno");
         Assertions.assertThatCode(() -> this.funcionarioService.updateFuncionario(
-                1L, funciarioToBeUpdate)).doesNotThrowAnyException();
+                funciarioToBeUpdate)).doesNotThrowAnyException();
     }
 
     @Test
     void WhenSuccessDeleteEmployee(){
-        Assertions.assertThatCode(() -> this.funcionarioService.deleteFuncionario(1L))
+        FuncionarioIdRequestDTO funcionarioIdRequest = funcionarioDTOBuilder.buildeFuncionarioIdRequest();
+
+        Assertions.assertThatCode(() -> this.funcionarioService.deleteFuncionario(funcionarioIdRequest))
                 .doesNotThrowAnyException();
     }
 
     @Test
     void WhenGetSuccessUpdateAttribute(){
-        FuncionarioPatchRequest funcionarioToBeCreated = funcionarioDTOBuilder.buildFuncionarioDTOpatch();
+        FuncionarioPatchRequestDTO funcionarioToBeCreated = funcionarioDTOBuilder.buildFuncionarioDTOpatch();
         funcionarioToBeCreated.setNome("Julio");
         Assertions.assertThatCode(() -> this.funcionarioService.replaceFuncionario(
-                1L,funcionarioToBeCreated)).doesNotThrowAnyException();
+                funcionarioToBeCreated)).doesNotThrowAnyException();
 
     }
 

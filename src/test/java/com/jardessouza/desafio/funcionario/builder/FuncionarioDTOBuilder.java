@@ -2,9 +2,7 @@ package com.jardessouza.desafio.funcionario.builder;
 
 import com.jardessouza.desafio.endereco.builder.EnderecoDTOBuilder;
 import com.jardessouza.desafio.endereco.entity.Endereco;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioPatchRequest;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioRequestDTO;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioResponseDTO;
+import com.jardessouza.desafio.funcionario.dto.*;
 import com.jardessouza.desafio.funcionario.entity.Funcionario;
 import com.jardessouza.desafio.funcionario.enums.Sexo;
 import lombok.Builder;
@@ -28,8 +26,8 @@ public class FuncionarioDTOBuilder {
         return new FuncionarioRequestDTO(nome, idade, sexo, cep);
     }
 
-    public FuncionarioPatchRequest buildFuncionarioDTOpatch(){
-        return new FuncionarioPatchRequest(nome, idade, sexo, cep);
+    public FuncionarioPatchRequestDTO buildFuncionarioDTOpatch(){
+        return new FuncionarioPatchRequestDTO(id, nome, idade, sexo, cep);
     }
 
     public FuncionarioResponseDTO buildFuncionarioResponse(){
@@ -44,6 +42,17 @@ public class FuncionarioDTOBuilder {
                 .sexo(sexo)
                 .endereco(endereco)
                 .build();
+    }
+
+    public FuncionarioCepRequestDTO buildFuncionarioCepRequest(){
+        return new FuncionarioCepRequestDTO(cep);
+    }
+    public FuncionarioUpdateRequestDTO buildFuncionarioUpdateRequest(){
+        return new FuncionarioUpdateRequestDTO(id, nome,idade, sexo, cep);
+    }
+
+    public FuncionarioIdRequestDTO buildeFuncionarioIdRequest(){
+        return new FuncionarioIdRequestDTO(id);
     }
 
 }

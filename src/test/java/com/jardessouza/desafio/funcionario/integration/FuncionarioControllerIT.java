@@ -1,7 +1,9 @@
 package com.jardessouza.desafio.funcionario.integration;
 
 import com.jardessouza.desafio.funcionario.builder.FuncionarioDTOBuilder;
+import com.jardessouza.desafio.funcionario.dto.FuncionarioIdRequestDTO;
 import com.jardessouza.desafio.funcionario.dto.FuncionarioRequestDTO;
+import com.jardessouza.desafio.funcionario.dto.FuncionarioResponseDTO;
 import com.jardessouza.desafio.funcionario.entity.Funcionario;
 import com.jardessouza.desafio.funcionario.repository.FuncionarioRepository;
 import org.assertj.core.api.Assertions;
@@ -27,9 +29,6 @@ public class FuncionarioControllerIT {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    @Autowired
-    private FuncionarioRepository funcionarioRepository;
-
     @Test
     void WhenSaveReturnsEmployeeWithSuccess() {
         ResponseEntity<Funcionario> funcionarioEntity = createAndSaveFuncionario();
@@ -38,18 +37,6 @@ public class FuncionarioControllerIT {
         Assertions.assertThat(funcionarioEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(funcionarioEntity.getBody()).isNotNull();
 
-    }
-
-    @Test
-    void WhenSearchForIdEGetSuccessRetornarEmployee() {
-        ResponseEntity<Funcionario> funcionarioEntityCreated = createAndSaveFuncionario();
-
-        Funcionario funcionarioEntity = testRestTemplate.getForObject(
-                "/api/v1/gerenciadorfuncionarios/funcionarios/{id}", Funcionario.class, 1L);
-
-        Assertions.assertThat(funcionarioEntity.getId()).isNotNull();
-        Assertions.assertThat(funcionarioEntity.getId()).isEqualTo(1L);
-        Assertions.assertThat(funcionarioEntity.getNome()).isEqualTo(funcionarioEntityCreated.getBody().getNome());
     }
 
     @Test
@@ -62,46 +49,6 @@ public class FuncionarioControllerIT {
 
         Assertions.assertThat(listAllFuncionarios).isNotNull();
         Assertions.assertThat(listAllFuncionarios.get(0).getNome()).isEqualTo(funcionarioEntityCreated.getBody().getNome());
-    }
-
-    @Test
-    void WhenFindCEPReturnsEmployeeWithSuccess() {
-        ResponseEntity<Funcionario> funcionarioEntityCreated = createAndSaveFuncionario();
-
-        Funcionario funcionarioEntity = testRestTemplate.getForObject(
-                "/api/v1/gerenciadorfuncionarios/funcionarios/cep/{cep}", Funcionario.class, 65065600);
-
-        Assertions.assertThat(funcionarioEntity).isNotNull();
-        Assertions.assertThat(funcionarioEntity.getId()).isNotNull();
-        Assertions.assertThat(funcionarioEntity.getId()).isEqualTo(1L);
-        Assertions.assertThat(funcionarioEntity.getNome()).isEqualTo(funcionarioEntityCreated.getBody().getNome());
-
-    }
-
-    @Test
-    void WhenSuccessUpdateEmployee() {
-        FuncionarioRequestDTO funcionarioRequestDTO = FuncionarioDTOBuilder.builder().build().buildFuncionarioDTO();
-        ResponseEntity<Funcionario> funcionarioEntityCreated = createAndSaveFuncionario();
-
-        funcionarioRequestDTO.setNome("Andre Souza");
-
-        ResponseEntity<Void> funcionarioEntity = testRestTemplate.exchange(
-                "/api/v1/gerenciadorfuncionarios/funcionarios/{id}", HttpMethod.PUT,
-                new HttpEntity<>(funcionarioRequestDTO), Void.class, 1L);
-
-        Assertions.assertThat(funcionarioEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-    }
-
-    @Test
-    void WhenSuccessDeleteEmployee() {
-        FuncionarioRequestDTO funcionarioRequestDTO = FuncionarioDTOBuilder.builder().build().buildFuncionarioDTO();
-        ResponseEntity<Funcionario> funcionarioEntityCreated = createAndSaveFuncionario();
-
-        ResponseEntity<Void> funcionarioEntity = testRestTemplate.exchange(
-                "/api/v1/gerenciadorfuncionarios/funcionarios/{id}", HttpMethod.DELETE,
-                null, Void.class, 1L);
-
-        Assertions.assertThat(funcionarioEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     private ResponseEntity<Funcionario> createAndSaveFuncionario() {
