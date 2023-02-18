@@ -1,8 +1,9 @@
 package com.jardessouza.desafio.funcionario.mapper;
 
-import com.jardessouza.desafio.funcionario.dto.FuncionarioPatchRequest;
+import com.jardessouza.desafio.funcionario.dto.FuncionarioPatchRequestDTO;
 import com.jardessouza.desafio.funcionario.dto.FuncionarioRequestDTO;
 import com.jardessouza.desafio.funcionario.dto.FuncionarioResponseDTO;
+import com.jardessouza.desafio.funcionario.dto.FuncionarioUpdateRequestDTO;
 import com.jardessouza.desafio.funcionario.entity.Funcionario;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -18,6 +19,9 @@ public interface FuncionarioMapper {
     List<FuncionarioResponseDTO> toDTO(List<Funcionario> funcionarioList);
     FuncionarioResponseDTO toDTO(Funcionario funcionario);
     FuncionarioRequestDTO toDTORequest(Funcionario funcionario);
-    Funcionario toModel(FuncionarioPatchRequest funcionarioPatchRequest);
+    FuncionarioRequestDTO toDTORequest(FuncionarioUpdateRequestDTO funcionarioUpdateRequestDTO);
+    Funcionario toModel(FuncionarioPatchRequestDTO funcionarioPatchRequestDTO);
+
+
 
 }

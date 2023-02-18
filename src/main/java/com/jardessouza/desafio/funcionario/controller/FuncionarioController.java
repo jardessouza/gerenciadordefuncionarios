@@ -1,8 +1,6 @@
 package com.jardessouza.desafio.funcionario.controller;
 
-import com.jardessouza.desafio.funcionario.dto.FuncionarioPatchRequest;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioRequestDTO;
-import com.jardessouza.desafio.funcionario.dto.FuncionarioResponseDTO;
+import com.jardessouza.desafio.funcionario.dto.*;
 import com.jardessouza.desafio.funcionario.service.FuncionarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,54 +11,50 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/gerenciadorfuncionarios/funcionarios")
 @RequiredArgsConstructor
-public class FuncionarioController implements FuncionarioControllerDocs {
+public class FuncionarioController {
     private final FuncionarioService funcionarioService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FuncionarioResponseDTO save(@RequestBody FuncionarioRequestDTO request){
+    public FuncionarioResponseDTO save(@RequestBody FuncionarioRequestDTO request) {
         return this.funcionarioService.save(request);
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping("/id")
     @ResponseStatus(HttpStatus.OK)
-    public FuncionarioResponseDTO findByIdFuncionario(@PathVariable Long id){
-        return this.funcionarioService.findByIdFuncionario(id);
+    public FuncionarioResponseDTO findByIdFuncionario(@RequestBody FuncionarioIdRequestDTO request) {
+        return this.funcionarioService.findByIdFuncionario(request);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<FuncionarioResponseDTO> listAllFuncionarios(){
+    public List<FuncionarioResponseDTO> listAllFuncionarios() {
         return this.funcionarioService.getAllFuncionarios();
     }
 
-    @GetMapping(path = "/cep/{cep}")
+    @GetMapping(path = "/cep")
     @ResponseStatus(HttpStatus.OK)
-    public FuncionarioResponseDTO getFuncionarioByCep(@PathVariable String cep){
-        return this.funcionarioService.getFuncionarioByCep(cep);
+    public FuncionarioResponseDTO getFuncionarioByCep(@RequestBody FuncionarioCepRequestDTO request) {
+        return this.funcionarioService.getFuncionarioByCep(request);
     }
 
-    @PutMapping(path = "/{id}")
+    @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateFuncionario(@PathVariable Long id, @RequestBody FuncionarioRequestDTO request){
-        this.funcionarioService.updateFuncionario(id, request);
+    public void updateFuncionario(@RequestBody FuncionarioUpdateRequestDTO request) {
+        this.funcionarioService.updateFuncionario(request);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFuncionario(@PathVariable Long id){
-        this.funcionarioService.deleteFuncionario(id);
+    public void deleteFuncionario(@RequestBody FuncionarioIdRequestDTO request) {
+        this.funcionarioService.deleteFuncionario(request);
     }
 
-    @PatchMapping(path = "/{id}")
+    @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void replaceFuncionario(@PathVariable Long id, @RequestBody FuncionarioPatchRequest request){
-        this.funcionarioService.replaceFuncionario(id, request);
+    public void replaceFuncionario(@RequestBody FuncionarioPatchRequestDTO request) {
+        this.funcionarioService.replaceFuncionario(request);
     }
-
-
-
-
-
 
 
 }
