@@ -1,5 +1,6 @@
 package com.jardessouza.desafio.funcionario.dto;
 
+import com.jardessouza.desafio.endereco.entity.Endereco;
 import com.jardessouza.desafio.funcionario.enums.Sexo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
