@@ -84,7 +84,8 @@ public class FuncionarioServiceTest {
     void WhenSearchForIdEGetSuccessRetornarEmployee(){
         FuncionarioRequestDTO funcionarioExpected = funcionarioDTOBuilder.buildFuncionarioDTO();
 
-        FuncionarioResponseDTO funcionarioFound = this.funcionarioService.findAndCheckFuncionarioExists(1L);
+        FuncionarioResponseDTO funcionarioFound = this.funcionarioService.findByIdFuncionario(
+                funcionarioDTOBuilder.buildeFuncionarioIdRequest());
 
         Assertions.assertThat(funcionarioFound.getId()).isNotNull();
         Assertions.assertThat(funcionarioFound.getNome()).isEqualTo(funcionarioExpected.getNome());
@@ -96,7 +97,8 @@ public class FuncionarioServiceTest {
                 .thenReturn(Optional.empty());
 
         Assertions.assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> this.funcionarioService.findAndCheckFuncionarioExists(1L));
+                .isThrownBy(() -> this.funcionarioService.findByIdFuncionario(
+                        funcionarioDTOBuilder.buildeFuncionarioIdRequest()));
     }
 
     @Test

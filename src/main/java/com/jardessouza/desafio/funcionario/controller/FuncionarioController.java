@@ -1,5 +1,6 @@
 package com.jardessouza.desafio.funcionario.controller;
 
+import com.jardessouza.desafio.funcionario.documentation.FuncionarioControllerDocs;
 import com.jardessouza.desafio.funcionario.dto.*;
 import com.jardessouza.desafio.funcionario.service.FuncionarioService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/gerenciadorfuncionarios/funcionarios")
 @RequiredArgsConstructor
-public class FuncionarioController {
+public class FuncionarioController implements FuncionarioControllerDocs {
     private final FuncionarioService funcionarioService;
 
     @PostMapping
