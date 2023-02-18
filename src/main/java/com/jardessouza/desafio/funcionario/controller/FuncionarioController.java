@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/gerenciadorfuncionarios/funcionarios")
 @RequiredArgsConstructor
-public class FuncionarioController {
+public class FuncionarioController implements FuncionarioControllerDocs {
     private final FuncionarioService funcionarioService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
