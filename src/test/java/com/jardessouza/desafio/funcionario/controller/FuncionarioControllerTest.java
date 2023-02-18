@@ -46,7 +46,7 @@ public class FuncionarioControllerTest {
         BDDMockito.when(this.funcionarioServiceMock.save(ArgumentMatchers.any()))
                 .thenReturn(funcionarioDTOBuilder.buildFuncionarioResponse());
 
-        BDDMockito.when(this.funcionarioServiceMock.findAndCheckFuncionarioExists(ArgumentMatchers.anyLong()))
+        BDDMockito.when(this.funcionarioServiceMock.findByIdFuncionario(ArgumentMatchers.any()))
                 .thenReturn(funcionarioDTOBuilder.buildFuncionarioResponse());
 
         BDDMockito.when(this.funcionarioServiceMock.getAllFuncionarios())
