@@ -13,6 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Endereco implements Serializable {
     private static final long serialVersionUID = 1L;
