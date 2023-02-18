@@ -83,6 +83,8 @@ public class FuncionarioControllerIT {
         FuncionarioRequestDTO funcionarioRequestDTO = FuncionarioDTOBuilder.builder().build().buildFuncionarioDTO();
         ResponseEntity<Funcionario> funcionarioEntityCreated = createAndSaveFuncionario();
 
+        funcionarioRequestDTO.setNome("Andre Souza");
+
         ResponseEntity<Void> funcionarioEntity = testRestTemplate.exchange(
                 "/api/v1/gerenciadorfuncionarios/funcionarios/{id}", HttpMethod.PUT,
                 new HttpEntity<>(funcionarioRequestDTO), Void.class, 1L);
