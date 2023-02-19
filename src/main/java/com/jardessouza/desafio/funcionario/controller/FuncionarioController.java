@@ -21,7 +21,7 @@ public class FuncionarioController implements FuncionarioControllerDocs {
         return this.funcionarioService.save(request);
     }
 
-    @GetMapping("/id")
+    @PostMapping("/id")
     @ResponseStatus(HttpStatus.OK)
     public FuncionarioResponseDTO findByIdFuncionario(@RequestBody FuncionarioIdRequestDTO request) {
         return this.funcionarioService.findByIdFuncionario(request);
@@ -33,7 +33,7 @@ public class FuncionarioController implements FuncionarioControllerDocs {
         return this.funcionarioService.getAllFuncionarios();
     }
 
-    @GetMapping(path = "/cep")
+    @PostMapping(path = "/cep")
     @ResponseStatus(HttpStatus.OK)
     public FuncionarioResponseDTO getFuncionarioByCep(@RequestBody FuncionarioCepRequestDTO request) {
         return this.funcionarioService.getFuncionarioByCep(request);
@@ -54,7 +54,7 @@ public class FuncionarioController implements FuncionarioControllerDocs {
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void replaceFuncionario(@RequestBody FuncionarioPatchRequestDTO request) {
-        this.funcionarioService.replaceFuncionario(request);
+         this.funcionarioService.replaceFuncionario(request);
     }
 
 
