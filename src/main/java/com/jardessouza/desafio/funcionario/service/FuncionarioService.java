@@ -25,16 +25,16 @@ public class FuncionarioService {
     private final EnderecoRepository enderecoRepository;
 
     @Transactional
-    public FuncionarioResponseDTO save(FuncionarioRequestDTO funcionarioRequestDTO) {
-        checkIfFuncionarioExists(funcionarioRequestDTO.getNome());
-        Funcionario fucionarioTobeCreated = getFuncionarioAndSetEndereco(funcionarioRequestDTO);
+    public FuncionarioResponseDTO save(FuncionarioRequestDTO request) {
+        checkIfFuncionarioExists(request.getNome());
+        Funcionario fucionarioTobeCreated = getFuncionarioAndSetEndereco(request);
         Funcionario funcionarioCreated = this.funcionarioRepository.save(fucionarioTobeCreated);
         return FuncionarioMapper.INSTANCE.toDTO(funcionarioCreated);
     }
 
-    public FuncionarioResponseDTO findByIdFuncionario(FuncionarioIdRequestDTO funcionarioIdRequest) {
-        Funcionario funcionarioFound = this.funcionarioRepository.findById(funcionarioIdRequest.getId())
-                .orElseThrow(() -> new FuncionarioNotFound(funcionarioIdRequest.getId()));
+    public FuncionarioResponseDTO findByIdFuncionario(FuncionarioIdRequestDTO funcionarioRequest) {
+        Funcionario funcionarioFound = this.funcionarioRepository.findById(funcionarioRequest.getId())
+                .orElseThrow(() -> new FuncionarioNotFound(funcionarioRequest.getId()));
         getFuncionarioAndSetEndereco(FuncionarioMapper.INSTANCE.toDTORequest(funcionarioFound));
         return FuncionarioMapper.INSTANCE.toDTO(funcionarioFound);
     }
@@ -44,26 +44,26 @@ public class FuncionarioService {
         return FuncionarioMapper.INSTANCE.toDTO(listAllFuncionarios);
     }
 
-    public FuncionarioResponseDTO getFuncionarioByCep(FuncionarioCepRequestDTO funcionarioCepRequest) {
-        Funcionario funcionarioFound = this.funcionarioRepository.findByCep(funcionarioCepRequest.getCep())
-                .orElseThrow(() -> new FuncionarioNotFound(funcionarioCepRequest.getCep()));
+    public FuncionarioResponseDTO getFuncionarioByCep(FuncionarioCepRequestDTO funcionarioRequest) {
+        Funcionario funcionarioFound = this.funcionarioRepository.findByCep(funcionarioRequest.getCep())
+                .orElseThrow(() -> new FuncionarioNotFound(funcionarioRequest.getCep()));
         getFuncionarioAndSetEndereco(FuncionarioMapper.INSTANCE.toDTORequest(funcionarioFound));
         return FuncionarioMapper.INSTANCE.toDTO(funcionarioFound);
     }
 
-    public void updateFuncionario(FuncionarioUpdateRequestDTO funcionarioRequestDTO) {
-        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioRequestDTO.getId());
-        getAndUpdateFuncionario(funcionarioRequestDTO, funcionarioFound);
+    public void updateFuncionario(FuncionarioUpdateRequestDTO funcionarioRequest) {
+        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioRequest.getId());
+        getAndUpdateFuncionario(funcionarioRequest, funcionarioFound);
     }
 
-    public void deleteFuncionario(FuncionarioIdRequestDTO funcionarioIdRequest) {
-        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioIdRequest.getId());
+    public void deleteFuncionario(FuncionarioIdRequestDTO funcionarioRequest) {
+        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioRequest.getId());
         this.funcionarioRepository.delete(FuncionarioMapper.INSTANCE.toModel(funcionarioFound));
     }
 
-    public void replaceFuncionario(FuncionarioPatchRequestDTO funcionarioPatchRequestDTO) {
-        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioPatchRequestDTO.getId());
-        Funcionario funcionarioToBeCreated = FuncionarioMapper.INSTANCE.toModel(funcionarioPatchRequestDTO);
+    public void replaceFuncionario(FuncionarioPatchRequestDTO funcionarioRequest) {
+        FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioRequest.getId());
+        Funcionario funcionarioToBeCreated = FuncionarioMapper.INSTANCE.toModel(funcionarioRequest);
         ValidatingAndSettingAttributesFuncionario(funcionarioFound, funcionarioToBeCreated);
         getAndSaveEndereco(funcionarioFound, funcionarioToBeCreated);
         this.funcionarioRepository.save(funcionarioToBeCreated);
@@ -83,37 +83,37 @@ public class FuncionarioService {
         return FuncionarioMapper.INSTANCE.toDTO(funcionarioFound);
     }
 
-    private Funcionario getFuncionarioAndSetEndereco(FuncionarioRequestDTO funcionarioRequestDTO) {
-        EnderecoResponseDTO enderecoCreated = this.enderecoService.getEndereco(funcionarioRequestDTO.getCep());
-        Funcionario fucionarioTobeCreated = FuncionarioMapper.INSTANCE.toModel(funcionarioRequestDTO);
+    private Funcionario getFuncionarioAndSetEndereco(FuncionarioRequestDTO funcionarioRequest) {
+        EnderecoResponseDTO enderecoCreated = this.enderecoService.getEndereco(funcionarioRequest.getCep());
+        Funcionario fucionarioTobeCreated = FuncionarioMapper.INSTANCE.toModel(funcionarioRequest);
         fucionarioTobeCreated.setEndereco(EnderecoMapper.INSTANCE.toModel(enderecoCreated));
         return fucionarioTobeCreated;
     }
 
-    private void getAndSaveEndereco(FuncionarioResponseDTO funcionarioFound, Funcionario funcionarioToBeCreated) {
+    private void getAndSaveEndereco(FuncionarioResponseDTO funcionarioFound, Funcionario funcionario) {
 
-        EnderecoResponseDTO enderecoToBeCreated = this.enderecoService.getEndereco(funcionarioToBeCreated.getCep());
+        EnderecoResponseDTO enderecoToBeCreated = this.enderecoService.getEndereco(funcionario.getCep());
         Endereco enderecoCreated = EnderecoMapper.INSTANCE.toModel(enderecoToBeCreated);
-        funcionarioToBeCreated.setEndereco(enderecoCreated);
-        funcionarioToBeCreated.getEndereco().setId(funcionarioFound.getEndereco().getId());
-        funcionarioToBeCreated.setId(funcionarioFound.getId());
+        funcionario.setEndereco(enderecoCreated);
+        funcionario.getEndereco().setId(funcionarioFound.getEndereco().getId());
+        funcionario.setId(funcionarioFound.getId());
         this.enderecoRepository.save(enderecoCreated);
     }
 
-    private void getAndUpdateFuncionario(FuncionarioUpdateRequestDTO funcionarioRequestDTO, FuncionarioResponseDTO
+    private void getAndUpdateFuncionario(FuncionarioUpdateRequestDTO funcionarioRequest, FuncionarioResponseDTO
             funcionarioFound) {
         Funcionario funcionarioToBeCreated = getFuncionarioAndSetEndereco(
-                FuncionarioMapper.INSTANCE.toDTORequest(funcionarioRequestDTO));
+                FuncionarioMapper.INSTANCE.toDTORequest(funcionarioRequest));
         funcionarioToBeCreated.setId(funcionarioFound.getId());
         funcionarioToBeCreated.getEndereco().setId(funcionarioFound.getEndereco().getId());
         this.enderecoRepository.save(funcionarioToBeCreated.getEndereco());
         this.funcionarioRepository.save(funcionarioToBeCreated);
     }
 
-    private static void ValidatingAndSettingAttributesFuncionario(FuncionarioResponseDTO funcionarioFound, Funcionario funcionarioToBeCreated) {
-        if (funcionarioToBeCreated.getNome() == null) funcionarioToBeCreated.setNome(funcionarioFound.getNome());
-        if (funcionarioToBeCreated.getSexo() == null) funcionarioToBeCreated.setSexo(funcionarioFound.getSexo());
-        if (funcionarioToBeCreated.getIdade() == null) funcionarioToBeCreated.setIdade(funcionarioFound.getIdade());
-        if (funcionarioToBeCreated.getCep() == null) funcionarioToBeCreated.setCep(funcionarioFound.getCep());
+    private static void ValidatingAndSettingAttributesFuncionario(FuncionarioResponseDTO funcionarioFound, Funcionario funcionario) {
+        if (funcionario.getNome() == null) funcionario.setNome(funcionarioFound.getNome());
+        if (funcionario.getSexo() == null) funcionario.setSexo(funcionarioFound.getSexo());
+        if (funcionario.getIdade() == null) funcionario.setIdade(funcionarioFound.getIdade());
+        if (funcionario.getCep() == null) funcionario.setCep(funcionarioFound.getCep());
     }
 }
