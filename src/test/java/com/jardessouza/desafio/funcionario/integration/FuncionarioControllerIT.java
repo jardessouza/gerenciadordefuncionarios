@@ -26,7 +26,7 @@ public class FuncionarioControllerIT {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    String url = "/api/v1/gerenciadorfuncionarios/funcionarios";
+    String url = "/gerenciadorfuncionarios/api/v1/funcionarios";
 
     @Test
     void WhenSaveReturnsEmployeeWithSuccess() {

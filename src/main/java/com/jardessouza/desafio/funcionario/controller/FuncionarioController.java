@@ -7,23 +7,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/gerenciadorfuncionarios/funcionarios")
+@RequestMapping("/gerenciadorfuncionarios/api/v1/funcionarios")
 @RequiredArgsConstructor
 public class FuncionarioController implements FuncionarioControllerDocs {
     private final FuncionarioService funcionarioService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FuncionarioResponseDTO save(@RequestBody FuncionarioRequestDTO request) {
+    public FuncionarioResponseDTO save(@RequestBody @Valid FuncionarioRequestDTO request) {
         return this.funcionarioService.save(request);
     }
 
     @PostMapping("/id")
     @ResponseStatus(HttpStatus.OK)
-    public FuncionarioResponseDTO findByIdFuncionario(@RequestBody FuncionarioIdRequestDTO request) {
+    public FuncionarioResponseDTO findByIdFuncionario(@RequestBody @Valid FuncionarioIdRequestDTO request) {
         return this.funcionarioService.findByIdFuncionario(request);
     }
 
@@ -35,19 +36,19 @@ public class FuncionarioController implements FuncionarioControllerDocs {
 
     @PostMapping(path = "/cep")
     @ResponseStatus(HttpStatus.OK)
-    public FuncionarioResponseDTO getFuncionarioByCep(@RequestBody FuncionarioCepRequestDTO request) {
+    public FuncionarioResponseDTO getFuncionarioByCep(@RequestBody @Valid FuncionarioCepRequestDTO request) {
         return this.funcionarioService.getFuncionarioByCep(request);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateFuncionario(@RequestBody FuncionarioUpdateRequestDTO request) {
+    public void updateFuncionario(@RequestBody @Valid FuncionarioUpdateRequestDTO request) {
         this.funcionarioService.updateFuncionario(request);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFuncionario(@RequestBody FuncionarioIdRequestDTO request) {
+    public void deleteFuncionario(@RequestBody @Valid FuncionarioIdRequestDTO request) {
         this.funcionarioService.deleteFuncionario(request);
     }
 
