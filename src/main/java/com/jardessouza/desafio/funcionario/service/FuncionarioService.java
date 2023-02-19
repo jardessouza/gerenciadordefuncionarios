@@ -50,7 +50,7 @@ public class FuncionarioService {
         getFuncionarioAndSetEndereco(FuncionarioMapper.INSTANCE.toDTORequest(funcionarioFound));
         return FuncionarioMapper.INSTANCE.toDTO(funcionarioFound);
     }
-
+    @Transactional
     public void updateFuncionario(FuncionarioUpdateRequestDTO funcionarioRequest) {
         FuncionarioResponseDTO funcionarioFound = findAndCheckFuncionarioExists(funcionarioRequest.getId());
         getAndUpdateFuncionario(funcionarioRequest, funcionarioFound);
